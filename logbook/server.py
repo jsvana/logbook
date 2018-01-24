@@ -1,7 +1,10 @@
 import json
 
 
-from flask import Flask
+from flask import (
+    send_from_directory,
+    Flask,
+)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -19,6 +22,11 @@ app = Flask(__name__, static_url_path='/static')
 @app.route('/')
 def index():
     return app.send_static_file('html/index.html')
+
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('static/js', path)
 
 
 @app.route('/aircraft')
@@ -46,7 +54,7 @@ def flights():
 
     return app.response_class(
         response=json.dumps(
-            list(session.query(Flight).all()),
+            list(session.query(Flight).order_by(Flight.date).all()),
             cls=AlchemyEncoder,
         ),
         status=200,

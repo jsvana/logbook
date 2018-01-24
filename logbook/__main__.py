@@ -87,7 +87,7 @@ def cmd_import(args):
 
             for i, entry in enumerate(row):
                 try:
-                    row[i] = datetime.strptime(entry, '%Y-%M-%d').date()
+                    row[i] = datetime.strptime(entry, '%Y-%m-%d').date()
                 except ValueError:
                     try:
                         row[i] = json.loads(entry)

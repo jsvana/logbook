@@ -142,7 +142,7 @@ class AlchemyEncoder(json.JSONEncoder):
             if isinstance(value, Decimal):
                 value = float(value)
             elif isinstance(value, date):
-                value = value.strftime('%Y-%M-%d')
+                value = value.strftime('%Y-%m-%d')
             try:
                 json.dumps(value)
                 fields[field] = value
