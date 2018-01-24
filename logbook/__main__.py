@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import argparse
 import csv
 import json
@@ -13,6 +12,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 
 
+from . import server
 from .models import (
     Aircraft,
     Flight,
@@ -23,6 +23,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     subparsers = parser.add_subparsers(dest='cmd')
+
     import_parser = subparsers.add_parser(
         'import',
         help='Import a ForeFlight logbook CSV into SQLite',
@@ -33,6 +34,18 @@ def parse_args():
         help='Logbook to import',
     )
     import_parser.set_defaults(cmd=cmd_import)
+
+    server_parser = subparsers.add_parser(
+        'server',
+        help='Run the logbook server',
+    )
+    server_parser.add_argument(
+        '--port',
+        type=int,
+        default=5000,
+        help='Port to bind to (default is %(default)s)',
+    )
+    server_parser.set_defaults(cmd=cmd_server)
 
     return parser.parse_args()
 
@@ -105,6 +118,10 @@ def cmd_import(args):
     print('Imported!')
 
     return True
+
+
+def cmd_server(args):
+    server.run(args.port)
 
 
 def main():

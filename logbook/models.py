@@ -1,3 +1,6 @@
+import json
+
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -7,8 +10,12 @@ from sqlalchemy import (
     Numeric,
     String,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import (
+    declarative_base,
+    DeclarativeMeta,
+)
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 
 
 Base = declarative_base()
@@ -31,11 +38,9 @@ class Aircraft(Base):
     high_performance = Column('high_performance', Boolean)
     pressurized = Column('pressurized', Boolean)
 
-    SPECIAL_KEYS = {'class', 'from'}
-
     def __init__(self, data):
         for k, v in data.items():
-            if k in self.SPECIAL_KEYS:
+            if k in {'class', 'from'}:
                 k = '_' + k
             setattr(self, k, v)
 
@@ -101,11 +106,9 @@ class Flight(Base):
 
     aircraft = relationship('Aircraft')
 
-    SPECIAL_KEYS = {'class', 'from'}
-
     def __init__(self, data):
         for k, v in data.items():
-            if k in self.SPECIAL_KEYS:
+            if k in {'class', 'from'}:
                 k = '_' + k
             expect_float = isinstance(
                 getattr(self.__class__, k).property.columns[0].type,
@@ -114,3 +117,29 @@ class Flight(Base):
             if expect_float and v == '':
                 v = 0.0
             setattr(self, k, v)
+
+
+class AlchemyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if not isinstance(obj.__class__, DeclarativeMeta):
+            return json.JSONEncoder.default(self, obj)
+
+        fields = {}
+        field_names = [
+            f for f in dir(obj) if not f.startswith('__')
+            and f != 'metadata'
+        ]
+        for field in field_names:
+            try:
+                field_val = getattr(obj.__class__, field)
+            except Exception:
+                continue
+            if not isinstance(field_val, InstrumentedAttribute):
+                continue
+            value = getattr(obj, field)
+            try:
+                json.dumps(value)
+                fields[field] = value
+            except TypeError:
+                fields[field] = None
+        return fields
