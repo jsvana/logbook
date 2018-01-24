@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 import json
 
@@ -140,6 +141,8 @@ class AlchemyEncoder(json.JSONEncoder):
             value = getattr(obj, field)
             if isinstance(value, Decimal):
                 value = float(value)
+            elif isinstance(value, date):
+                value = value.strftime('%Y-%M-%d')
             try:
                 json.dumps(value)
                 fields[field] = value
