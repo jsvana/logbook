@@ -1,3 +1,4 @@
+from decimal import Decimal
 import json
 
 
@@ -137,6 +138,8 @@ class AlchemyEncoder(json.JSONEncoder):
             if not isinstance(field_val, InstrumentedAttribute):
                 continue
             value = getattr(obj, field)
+            if isinstance(value, Decimal):
+                value = float(value)
             try:
                 json.dumps(value)
                 fields[field] = value
