@@ -3,25 +3,49 @@
   <head>
     <title>Logbook Visualizer</title>
 
+    <link rel="stylesheet" type="text/css" href="/css/semantic.min.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
 
   <body>
-    <select name="axis">
-      <option value="pic">PIC</option>
-      <option value="sic">SIC</option>
-      <option value="total_time">Total Time</option>
-      <option value="dual_received">Dual Received</option>
-      <option value="dual_given">Dual Given</option>
-      <option value="actual_instrument">Actual Instrument</option>
-      <option value="simulated_instrument">Simulated Instrument</option>
-    </select>
-    <input type="radio" id="cumulative_true" name="cumulative" value="true" checked="checked">
-    <label for="cumulative_true">Cumulative</label>
-    <input type="radio" id="cumulative_false" name="cumulative" value="false">
-    <label for="cumulative_false">Per Day</label>
-    <button onclick="redraw()">Redraw</button>
+    <div class="ui container">
+      <div class="ui form">
+        <div class="field">
+          <label>Fields</label>
+          <select multiple name="axis">
+            <option value="pic">PIC</option>
+            <option value="sic">SIC</option>
+            <option value="total_time">Total Time</option>
+            <option value="dual_received">Dual Received</option>
+            <option value="dual_given">Dual Given</option>
+            <option value="actual_instrument">Actual Instrument</option>
+            <option value="simulated_instrument">Simulated Instrument</option>
+            <option value="cross_country">Cross Country</option>
+            <option value="night">Night</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="ui radio">
+            <label for="cumulative_true">Cumulative</label>
+            <input type="radio" id="cumulative_true" name="cumulative" value="true" checked="checked">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio">
+            <label for="cumulative_false">Per Day</label>
+            <input type="radio" id="cumulative_false" name="cumulative" value="false">
+          </div>
+        </div>
+        <div class="field">
+          <button class="ui button" onclick="redraw()">Redraw</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui divider"></div>
+
     <div id="graph"></div>
+
     <script src="/js/visualize.js"></script>
   </body>
 </html>
